@@ -1,9 +1,9 @@
 <?php
 
 if ($_SERVER['SERVER_NAME'] == "www.pronet21.net" | $_SERVER['SERVER_NAME'] == "pronet21.net") {
-    $user = "pronet21_root";
-    $password = "pronet215231";
-    $db = "ws21";
+    $user = "";
+    $password = "";
+    $db = "";
     $email_error = TRUE;
     $mostrar_error = true;
     $debug = true;
