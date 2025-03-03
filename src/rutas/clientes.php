@@ -28,13 +28,14 @@ $app->post('/clientes/add', function(Request $request, Response $response){
     $db = new db();
     
     $datos = Array();
-    $datos['token']             = password_hash($request->getParam('token'),PASSWORD_BCRYPT);
-    $datos['nombre']            = $request->getParam('nombre');
-    $datos['tel_principal']     = $request->getParam('tel_principal');
-    $datos['tel_alternativo']   = $request->getParam('tel_alternativo');
-    $datos['email_principal']   = $request->getParam('email_principal');
-    $datos['email_alternativo'] = $request->getParam('email_alternativo');
-    $datos['ult_fecha_pago']    = Misc::format_mysql_date($request->getParam('ult_fecha_pago'));
+    $params = $request->getParsedBody();
+    $datos['token']             = password_hash($params['token'],PASSWORD_BCRYPT);
+    $datos['nombre']            = $params['nombre'];
+    $datos['tel_principal']     = $params['tel_principal'];
+    $datos['tel_alternativo']   = $params['tel_alternativo'];
+    $datos['email_principal']   = $params['email_principal'];
+    $datos['email_alternativo'] = $params['email_alternativo'];
+    $datos['ult_fecha_pago']    = Misc::format_mysql_date($params['ult_fecha_pago']);
     $datos['fecha_registro']    = date('Y-m-d');
     $datos['activo']            = 1;
     
@@ -83,20 +84,44 @@ $app->PUT('/clientes/edit/{id}', function(Request $request, Response $response){
     $db = new db();
     
     $datos = Array();
-    $datos['token']             = password_hash($request->getParam('token'),PASSWORD_BCRYPT);
-    $datos['nombre']            = $request->getParam('nombre');
-    $datos['tel_principal']     = $request->getParam('tel_principal');
-    $datos['tel_alternativo']   = $request->getParam('tel_alternativo');
-    $datos['email_principal']   = $request->getParam('email_principal');
-    $datos['email_alternativo'] = $request->getParam('email_alternativo');
-    $datos['ult_fecha_pago']    = $request->getParam('ult_fecha_pago');
-    $datos['fecha_registro']    = date('Y-m-d');
+    $params = $request->getParsedBody();
+    $datos['token']             = password_hash($params['token'],PASSWORD_BCRYPT);
+    $datos['nombre']            = $params['nombre'];
+    $datos['tel_principal']     = $params['tel_principal'];
+    $datos['tel_alternativo']   = $params['tel_alternativo'];
+    $datos['email_principal']   = $params['email_principal'];
+    $datos['email_alternativo'] = $params['email_alternativo'];
+    $datos['ult_fecha_pago']    = $params['ult_fecha_pago'];
+    //$datos['fecha_registro']    = date('Y-m-d');
     $datos['activo']            = 1;
     
     $r = $db->update('clientes', $datos,Array('id'=>$id_cliente));
     
     if ($r['suceed']) {
         echo 'Cliente actualizado con éxito: ('.$id_cliente.')';
+    } else {
+        echo $r['stats']['error'];
+    }
+    $r  = null;
+    $db = null;
+    
+});
+
+// PUT editar fecha pago cliente
+$app->PUT('/clientes/pay', function(Request $request, Response $response){
+    
+    $db = new db();
+    
+    $datos = Array();
+    $params = $request->getParsedBody();
+    
+    $id_cliente                 = $params['id'];
+    $datos['ult_fecha_pago']    = $params['ult_fecha_pago'];
+    
+    $r = $db->update('clientes', $datos,Array('id'=>$id_cliente));
+    
+    if ($r['suceed']) {
+        echo 'Fecha de pago actualizada con éxito: ('.$id_cliente.')';
     } else {
         echo $r['stats']['error'];
     }
